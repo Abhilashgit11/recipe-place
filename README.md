@@ -36,7 +36,7 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
     2. recipes
         1. reciape-detil
         2. recipe-list
-            2.2.1 recipe-item
+            1. recipe-item
     3. shopping-list
         1. shopping-list-editor
 Note: To generate component without the spec.ts file: ng g c component-name --spec false
