@@ -56,3 +56,20 @@ By using *ngIf, navigating between "Recipes" and "shopping-list" if the value of
 
 12. Allowing the user to add ingredients.
     With the help of @ViewChild() and @Output() we are passing data from shopping-edit component to shopping-list component and thereby adding an item to the list.
+13. (8. Course Project) Created a directive "dropdown" in "shared" folder.
+14. (10. Course Project) Created a two services 
+    1. recipe service(inside recipes folder)
+    2. shopping-list service (inside shopping-list folder)
+    3. Instead of using @Output and emitting events, now we are using services for cross component communication.
+    4. Moved recipe[] from "recipies.component.ts" to "recipe.service.ts" and created a method in "recipe.service.ts" to return the recipe[].
+    5. Created an event which emits "Recipe" in "recipe.service.ts".
+        eg.  recipeSelected = new EventEmitter<Recipe>();
+    6. Catching the event "recipeSelected" in "recipe.component.ts"
+        eg. this.recipeService.recipeSelected.subscribe(
+                (recipe: Recipe) => {
+                    this.selectedRecipe = recipe;
+                }
+            );
+15. Adding ingredients from "recipe-detail.component.ts" to "shopping-list.component.ts" by using
+    1. both recipe.service.ts and shopping-list.service.ts or 
+    2. just shopping-list.service.ts
