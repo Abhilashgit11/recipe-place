@@ -34,7 +34,7 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 4. Created components (with ng g c component-name)
     1. header
     2. recipes
-        1. reciape-detil
+        1. recipe-detail
         2. recipe-list
             1. recipe-item
     3. shopping-list
@@ -45,4 +45,14 @@ Note: To generate component without the spec.ts file: ng g c component-name --sp
 7. Created recipe.model.ts which has the structure of the recipe object.
 8. Added two recipe objects in recipe-list.component.ts.
 9. Populating the two recipe objects in a component using *ngFor.
-10. 
+--------------- 6. Course Project ------------------------------
+10. Implementing navigation between "Recipes" and "shopping-list"
+Added click events to both "Recipes" and "shopping-list" in header.component.html
+Sending data from header.component.html to app.component.html through  @Output() featureSelected.
+By using *ngIf, navigating between "Recipes" and "shopping-list" if the value of featureSelected is 'recipe' or not 'recipe'.
+11. Passing Recipe data with property binding and event binding. i.e passing data from 
+    1. recipe-item component to recipe-list component and from 
+    2. recipe-list component to recipes component and there by displaying recipe-detail component.(recipe-detail tag (child component) is used in recipes component (parent component))
+
+12. Allowing the user to add ingredients.
+    With the help of @ViewChild() and @Output() we are passing data from shopping-edit component to shopping-list component and thereby adding an item to the list.
