@@ -70,4 +70,6 @@ By using *ngIf, navigating between "Recipes" and "shopping-list" if the value of
                     this.selectedRecipe = recipe;
                 }
             );
-15.  
+15. Adding ingredients from "recipe-detail.component.ts" to "shopping-list.component.ts" by using
+    1. both recipe.service.ts and shopping-list.service.ts or 
+    2. just shopping-list.service.ts
