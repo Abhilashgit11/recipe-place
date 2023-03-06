@@ -24,6 +24,7 @@ export class RecipeService {
   constructor(private shoppingListService: ShoppingListService) { }
 
   getRecipes() {
+    // The slice() without arguments will retun a copy the array.
     return this.recipes.slice();
   }
 
