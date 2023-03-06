@@ -1,9 +1,11 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { Ingredient } from 'src/app/shared/ingredient.model';
 
-@Injectable({
-  providedIn: 'root'
-})
+// You can either add the following @Injectable on this service or 
+// provide "ShoppingListService" in app.module.ts under "providers"
+// @Injectable({
+//   providedIn: 'root'
+// })
 export class ShoppingListService {
 
   ingredientAdded = new EventEmitter<Ingredient[]>();
