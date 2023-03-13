@@ -1,4 +1,5 @@
 import { EventEmitter, Injectable } from '@angular/core';
+import { Subject } from 'rxjs';
 import { Ingredient } from 'src/app/shared/ingredient.model';
 import { ShoppingListService } from 'src/app/shopping-list/services/shopping-list.service';
 import { Recipe } from '../recipe-list/recipe.model';
@@ -8,7 +9,10 @@ import { Recipe } from '../recipe-list/recipe.model';
 })
 export class RecipeService {
 
-  recipeSelected = new EventEmitter<Recipe>();
+  // recipeSelected = new EventEmitter<Recipe>();
+  // Do not need this as we are using Routes
+  // recipeSelected = new Subject<Recipe>();
+
 
   private recipes: Recipe[] = [
     new Recipe('Recipe One', 
@@ -26,6 +30,10 @@ export class RecipeService {
   getRecipes() {
     // The slice() without arguments will retun a copy the array.
     return this.recipes.slice();
+  }
+
+  getRecipe(index: number) {
+    return this.recipes[index];
   }
 
   addIngredientsToShoppingList(ingredient: Ingredient[]) {

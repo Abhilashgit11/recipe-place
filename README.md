@@ -73,3 +73,7 @@ By using *ngIf, navigating between "Recipes" and "shopping-list" if the value of
 15. Adding ingredients from "recipe-detail.component.ts" to "shopping-list.component.ts" by using
     1. both recipe.service.ts and shopping-list.service.ts or 
     2. just shopping-list.service.ts
+
+16. Routing & Observables
+    1. Created a file "app-routing.module.ts" and added routes
+    2. Added <router-outlet> whever necessary(in app.component.html, recipes.component.html) 
