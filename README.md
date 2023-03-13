@@ -76,4 +76,7 @@ By using *ngIf, navigating between "Recipes" and "shopping-list" if the value of
 
 16. Routing & Observables
     1. Created a file "app-routing.module.ts" and added routes
-    2. Added <router-outlet> whever necessary(in app.component.html, recipes.component.html) 
+    2. Added <router-outlet> whever necessary(in app.component.html, recipes.component.html)
+    3. There are a lot of changes made when working on these two topics. 
+    4. Most of the code was commented as we are using routes.
+    5. Mainly we were working on Recipes components and its child components (Refer them for better understanding)
