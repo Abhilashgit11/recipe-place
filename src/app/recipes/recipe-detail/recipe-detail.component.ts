@@ -28,6 +28,8 @@ export class RecipeDetailComponent implements OnInit {
         this.recipe = this.recipeService.getRecipe(this.id);
       }
     );
+
+    
   }
 
   toShoppingList() {
@@ -40,4 +42,10 @@ export class RecipeDetailComponent implements OnInit {
     // this.router.navigate(['../', this.id, 'edit'], {relativeTo: this.route});
   }
 
+  OnDeleteRecipe() {
+    this.recipeService.deleteRecipe(this.id);
+    // If dont add the following router to navigate to "/recipes" 
+    // the deleted recipe will still show in the recipe-detals component 
+    this.router.navigate(['/recipes']);
+  }
 }

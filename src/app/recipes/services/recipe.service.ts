@@ -8,6 +8,7 @@ import { Recipe } from '../recipe-list/recipe.model';
   providedIn: 'root'
 })
 export class RecipeService {
+  recipesChanged = new Subject<Recipe[]>();
 
   // recipeSelected = new EventEmitter<Recipe>();
   // Do not need this as we are using Routes
@@ -22,13 +23,13 @@ export class RecipeService {
     new Recipe('Recipe Two', 
     'Entree', 
     'https://img.freepik.com/free-photo/grilled-chicken-breast-fresh-vegetable-salad-tomatoes-cucumbers-lettuce-leaves-chicken-salad-healthy-food-flat-lay-top-view_2829-4244.jpg?t=st=1667520987~exp=1667521587~hmac=0bdc0a393ccac635ebb7c9d40df21d8fe9c28b1e4d9811acd0b3b6e7dcc4e50b',
-    [new Ingredient('Meat', 1), new Ingredient('Sauce', 2)])
+    [new Ingredient('Meat', 1), new Ingredient('Sauce', 2)]),
   ]
 
   constructor(private shoppingListService: ShoppingListService) { }
 
   getRecipes() {
-    // The slice() without arguments will retun a copy the array.
+    // The slice() without arguments will retrun a copy of the array.
     return this.recipes.slice();
   }
 
@@ -38,5 +39,21 @@ export class RecipeService {
 
   addIngredientsToShoppingList(ingredient: Ingredient[]) {
     this.shoppingListService.addIngredients(ingredient);
+  }
+
+
+  addRecipe(recipe: Recipe) {
+    this.recipes.push(recipe);
+    this.recipesChanged.next(this.recipes.slice()); 
+  }
+
+  updateRecipe(index: number, newRecipe: Recipe) {
+    this.recipes[index] = newRecipe;
+    this.recipesChanged.next(this.recipes.slice());
+  }
+
+  deleteRecipe(index: number) {
+    this.recipes.splice(index, 1);
+    this.recipesChanged.next(this.recipes.slice());
   }
 }
