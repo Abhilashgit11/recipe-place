@@ -230,6 +230,13 @@ By using *ngIf, navigating between "Recipes" and "shopping-list" if the value of
             1. When you create a recipe and navigate to shopping list and come back to recipe we wont see the added recipe.
             2. This might be something we need. But for this recipe project we need to avoid this.
             3. This can be avoided by using @Injectable decorator on service or adding your service to Providers in app.module.ts
-    12. 
+19. Http
+    1. Setting a backend in firebase
+    2. Created a new service to make http requests. (You can also perform the same http requests in recipe.service.ts)
+    3. Made a put request
+    4. Made a get request
+    5. If the newly added recipe has no ingredients we must add in an empty ingredient to the recipe. It is considered good practice. This we achieve: When we are getting the recipes we add empty ingredient to the recipe via pipe() operator (in data-storage.service.ts).
+    6. Adding resolve to fetch data before hand. (Need to practice more on "resolve")
+20. 
 
 
