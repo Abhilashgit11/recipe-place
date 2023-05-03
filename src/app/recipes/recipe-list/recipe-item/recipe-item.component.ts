@@ -9,17 +9,19 @@ import { Recipe } from '../recipe.model';
 })
 export class RecipeItemComponent implements OnInit {
   @Input() recipe !: Recipe;
+  @Input() index!: number; 
   // @Input() recipe !: {name: string, desc: string, imagePath: string};
   // @Output() recipeSelected = new EventEmitter<void>();
 
-  constructor(private recipeService: RecipeService) { }
+  // constructor(private recipeService: RecipeService) { }
 
-  ngOnInit(): void {
+  ngOnInit(){
+
   }
 
-  displayRecipie() {
+ /*  displayRecipie() {
     // this.recipeSelected.emit();
     this.recipeService.recipeSelected.emit(this.recipe);
   }
-
+ */
 }

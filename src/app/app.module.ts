@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
@@ -12,6 +12,9 @@ import { RecipeDetailComponent } from './recipes/recipe-detail/recipe-detail.com
 import { RecipeItemComponent } from './recipes/recipe-list/recipe-item/recipe-item.component';
 import { DropdownDirective } from './shared/dropdown/dropdown.directive';
 import { ShoppingListService } from './shopping-list/services/shopping-list.service';
+import { AppRouting } from './app-routing.module';
+import { RecipesDefaultComponent } from './recipes/recipes-default/recipes-default.component';
+import { RecipeEditComponent } from './recipes/recipe-edit/recipe-edit.component';
 
 @NgModule({
   declarations: [
@@ -23,11 +26,15 @@ import { ShoppingListService } from './shopping-list/services/shopping-list.serv
     RecipeListComponent,
     RecipeDetailComponent,
     RecipeItemComponent,
-    DropdownDirective
+    DropdownDirective,
+    RecipesDefaultComponent,
+    RecipeEditComponent
   ],
   imports: [
     BrowserModule,
-    FormsModule
+    FormsModule,
+    AppRouting,
+    ReactiveFormsModule
   ],
   // The App would still work even if we dont provide ShoppingListService here.
   // But you have to provide @Injectable in "shopping-list.service.ts"

@@ -73,3 +73,163 @@ By using *ngIf, navigating between "Recipes" and "shopping-list" if the value of
 15. Adding ingredients from "recipe-detail.component.ts" to "shopping-list.component.ts" by using
     1. both recipe.service.ts and shopping-list.service.ts or 
     2. just shopping-list.service.ts
+
+16. Routing & Observables
+    1. Created a file "app-routing.module.ts" and added routes
+    2. Added <router-outlet> whever necessary(in app.component.html, recipes.component.html)
+    3. There are a lot of changes made when working on these two topics. 
+    4. Most of the code was commented as we are using routes.
+    5. Mainly we were working on Recipes components and its child components (Refer them for better understanding)
+
+17. Forms (Taking TD approach) (For shopping-list component)
+    1. Adding method: onSubmit() to form
+        <form (ngSubmit)="onSubmit(f)" #f="ngForm">
+    2. Binding the form and adding validations with "ngModel" "required"
+        <input type="text" id="name" class="form-control" name="name" ngModel required>
+    3. Making the items in the shopping list clickable
+        1. Adding a method ((click)="onEditItem(i)) to the items in the shopping list (shopping-list.component.html)
+            <a class="list-group-item" style="cursor:pointer" 
+                *ngFor = "let ingredient of ingredients let i = index" 
+                (click)="onEditItem(i)">
+                {{ingredient.name}} {{ingredient.amount}}
+            </a>
+        2. In shopping-list.component.ts and under method onEditItem(i) we are emitting the index of the item
+            onEditItem(index: number) {
+            this.shoppingListService.startedEditing.next(index);
+            }
+        3. We need to catch this emitted index in "shopping-edit.component.ts" and we are doing that in ngOnInit().
+            ngOnInit(){
+                this.subscription = this.shoppingListService.startedEditing.subscribe((index: number) => {
+                this.editedItemIndex = index;
+                this.editMode = true;
+                })
+            };
+        4. Make sure to clear the subscription:
+            ngOnDestroy() {
+                this.subscription.unsubscribe();
+            }
+        5. Loading the selected shopping list item into the form and we are doing that in ngOnInit().
+            ngOnInit(){
+                this.subscription = this.shoppingListService.startedEditing.subscribe((index: number) => {
+                this.editedItemIndex = index;
+                this.editMode = true;
+                this.editedItem = this.shoppingListService.getIngredient(index);
+                this.shoppingListForm.setValue({
+                    name: this.editedItem.name,
+                    amount: this.editedItem.amount
+                })
+                });
+            }
+    4. Updating existing items
+            1. Created updateIngredient() method in shopping-list.service.ts
+            2. We are calling this method in shopping-edit.component.ts when we submit the form. 
+            2. onSubmit() we are checking if an item is selected and if it is selected we are updating the item or else we are adding the item
+                if (this.editMode) {
+                    this.shoppingListService.updateIngredient(this.editedItemIndex, newIngredient);
+                } else {
+                    this.shoppingListService.addIngredient(newIngredient);
+                }
+    5. Resetting the form after adding the item or updating the item
+            onSubmit (form: NgForm) {
+                this.editMode = false;
+                form.reset();
+            }
+    6. Resetting the form on click of "Clear" button
+            onClear() {
+                this.shoppingListForm.reset();
+                this.editMode = false;
+            }
+    7. Deleting the shopping list item
+            onDelete() {
+                this.shoppingListService.deleteIngredient(this.editedItemIndex);
+                this.onClear();
+            }
+18. Forms (Taking Reactive approach) (for Recipes component) 
+    1. Created a Template form in "recipe-edit.component.html"
+    2. Created Reactive Form in recipe-edit.component.ts
+        recipeForm!: FormGroup;
+        and created a method
+        private initForm() {
+            let recipeName = '';
+            let recipeImagePath = '';
+            let recipeDescription = '';
+
+            if (this.editMode) {
+            const recipe = this.recipeService.getRecipe(this.id);
+            recipeName = recipe.name;
+            recipeImagePath = recipe.imagePath;
+            recipeDescription = recipe.desc;
+            }
+
+            this.recipeForm = new FormGroup({
+            'name': new FormControl(recipeName),
+            'imagePath': new FormControl(recipeImagePath),
+            'description': new FormControl(recipeDescription)
+            });
+        }
+    3. Now we have to bind the template in "recipe-edit.component.html" and reactive form in "recipe-edit.component.ts"
+        <form [formGroup]="recipeForm" (ngSubmit)="onSubmit()">
+        <input type="text" id="name" class="form-control" formControlName="name">
+        <textarea type="text" id="description" class="form-control" rows="6" formControlName="description">
+    4. Adding ingredient controls to FormArray
+        Refer to recipe-edit.component.ts
+        let recipeIngredients = new FormArray<FormGroup>([]);
+
+        for(let ingredient of recipe.ingredients) {
+          recipeIngredients.push(
+            new FormGroup({
+              'name': new FormControl(ingredient.name),
+              'amount': new FormControl(ingredient.amount)
+            })
+          );
+        }
+    5. Add Ingredient dynamically (on click)
+        1. Created a buttonin recipe-edit.component.html
+            <button type="button" class="btn btn-success" (click)="onAddIngredient()">Add Ingredient</button>
+        2. Implemented onAddIngredient() method in recipe-edit.component.ts
+            onAddIngredient() {
+                (this.recipeForm.get('ingredients') as FormArray).push(
+                    new FormGroup({
+                        'name': new FormControl(null, Validators.required),
+                        'amount': new FormControl(null, [Validators.required, Validators.pattern(/^[1-9]+[0-9]*$/)])
+                    })
+                );
+            }
+    6. Adding validations to all the FormControls.
+    7. Submitting the Form
+        1. Created two methods in recipe.service.ts: addRecipe() and updateRecipe()
+        2. When we click on save in recipe-edit.component.html, onSubmit() method is called.
+        3. In onSubmit() method we check if the form is in editMode, if it is in editMode updateRecipe() is called or else addRecipe() is called.
+    8. Adding cancel functionality
+        1.  Linked button click listener
+            <button type="button" class="btn btn-danger" (click)="onCancel()">Cancel</button>
+        2. onCancel() we are navigating away to the recipe-edit component
+            onCancel() {
+                this.router.navigate(['../'], {relativeTo: this.route});
+            }
+    9. Adding Delete funnctionality
+        OnDeleteRecipe() {
+            this.recipeService.deleteRecipe(this.id);
+            // If dont add the following router to navigate to "/recipes" 
+            // the deleted recipe will still show in the recipe-detals component 
+            this.router.navigate(['/recipes']);
+        }
+    10. At this point we are unable to see Image preview in recipe-edit component
+        Adding Image preview
+        1. Creating a local reference: imagePath
+            <input type="text" id="imagePath" class="form-control" formControlName="imagePath" #imagePath>
+        2. And now binding the image source with local reference value
+            <img [src]="imagePath.value" alt="Image" class="img-responsive">
+    11. (16.21) This is a bug.
+        There are three ways to provide a service.
+        1. Adding @Injectable decorator (e.g. recipe.service.ts)
+        2. Providing in app.module.ts under Providers: [] (e.g. app.module.ts)
+        3. Providing directly under a component. (e.g. recipes.component.ts)
+            This way when the component is destroyed the instance of the service is also destroyed.
+            For demonstration:
+            1. When you create a recipe and navigate to shopping list and come back to recipe we wont see the added recipe.
+            2. This might be something we need. But for this recipe project we need to avoid this.
+            3. This can be avoided by using @Injectable decorator on service or adding your service to Providers in app.module.ts
+    12. 
+
+
