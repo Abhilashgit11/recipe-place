@@ -11,13 +11,16 @@
                 <!-- Commented becoz now we are using Routes -->
                <!--  <li><a href="#" (click) = "onSelect('recipe')">Recipes</a></li>
                 <li><a href="#" (click) = "onSelect('shopping-list')">Shopping List</a></li> -->
-                <li routerLinkActive="active"><a routerLink="/recipes">Recipes</a></li>
-                <li routerLinkActive="active"><a routerLink="/auth">Login</a></li>
+                <li routerLinkActive="active" *ngIf="isAuthenticated"><a routerLink="/recipes">Recipes</a></li>
+                <li routerLinkActive="active" *ngIf="!isAuthenticated"><a routerLink="/auth">Login</a></li>
                 <li routerLinkActive="active"><a routerLink="/shoppinglist">Shopping List</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
+                <li *ngIf="isAuthenticated">
+                    <a style="cursor: pointer;" (click)="onLogout()">Logout</a>
+                </li>
                 <!-- class="dropdown" -->
-                <li class="dropdown" appDropdown> 
+                <li class="dropdown" appDropdown *ngIf="isAuthenticated">
                     <!-- class="dropdown-toggle" -->
                     <!-- <a href="#"  role="button">Manage <span class="caret"></span></a>  -->
                     <a style="cursor: pointer;"  role="button">Manage <span class="caret"></span></a> 

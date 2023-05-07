@@ -7,11 +7,12 @@ import { RecipesComponent } from "./recipes/recipes.component";
 import { ShoppingListComponent } from "./shopping-list/shopping-list.component";
 import { RecipeResolverService } from "./recipes/services/recipe-resolver/recipe-resolver.service";
 import { AuthComponent } from "./auth/auth.component";
+import { AuthGuard } from "./auth/auth.guard";
 
 const appRoutes: Routes = [
     // Here pathMatch means only redirect if the entire path is empty
-    {path: '', redirectTo: 'recipes', pathMatch: 'full'},
-    {path: 'recipes', component: RecipesComponent, children: [
+    {path: '', redirectTo: 'auth', pathMatch: 'full'},
+    {path: 'recipes', component: RecipesComponent, canActivate: [AuthGuard],  children: [
         {path: '', component: RecipesDefaultComponent},
         {path: 'new', component: RecipeEditComponent}, 
         {path: ':id', component: RecipeDetailComponent, resolve: [RecipeResolverService]},

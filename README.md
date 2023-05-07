@@ -237,6 +237,115 @@ By using *ngIf, navigating between "Recipes" and "shopping-list" if the value of
     4. Made a get request
     5. If the newly added recipe has no ingredients we must add in an empty ingredient to the recipe. It is considered good practice. This we achieve: When we are getting the recipes we add empty ingredient to the recipe via pipe() operator (in data-storage.service.ts).
     6. Adding resolve to fetch data before hand. (Need to practice more on "resolve")
-20. 
+20. Authentication
+    1. Created a new component "auth" with ng g c auth.
+    2. Created a Login/Sign Up form in auth.component.html
+    3. Added a link to Login page in header.component.html
+        <li routerLinkActive="active"><a routerLink="/auth">Login</a></li>
+    4. With Template Driven approach, added validators to the form like "required", "email", "minlength" for password etc.
+    5. In firebase we are securing the routes for recipes (both read and write).
+    6. We have created a sign-in method in firebase with email and password.
+    7. Created an Auth service to perform http calls.
+    7. Created a method for signup: Making Post call and handling errors.
+    8. Created a method for Login: Making Post call and handling errors.
+    9. (20.14) Creating and storing user data (auth.service.ts)
+        After the user enter email and password and clicks on submit a response is returned.
+        We are taking that response and creating a User object in "handleAuthentication" method
+        and emitting it.
 
+        .pipe(catchError(this.handleError), 
+        tap(resData => {
+            this.handleAuthentication(resData.email, resData.localId, resData.idToken, +resData.expiresIn);
+         })
+        );
+        
+        private handleAuthentication(email: string, userId: string, token: string, expiresIn: number) {
+        const expirationDate = new Date(new Date().getTime() + expiresIn * 1000);
+        const user = new User(email, userId, token, expirationDate);
+        this.userSubject.next(user);
+    }
+    10. (20.15) After a successful login we are redirecting user to '/recipes'
+        in auth.component.ts
+        this.router.navigate(['/recipes'])
 
+        We can navigate to '/recipes' in auth.service.ts as well, but to keep routing separate from auth service we are doing it in auth component.
+        1. Restricting pages when a user is authenticated or not
+            1. Hiding Recipes in the header component when a user is not logged in
+                <li routerLinkActive="active" *ngIf="isAuthenticated"><a routerLink="/recipes">Recipes</a></li>
+            2. Showing Login page when a user is not logged in
+                <li routerLinkActive="active" *ngIf="!isAuthenticated"><a routerLink="/auth">Login</a></li>
+            3. Showing Logout and Manage button only when user is logged in
+                <li *ngIf="isAuthenticated">
+                    <a style="cursor: pointer;">Logout</a>
+                </li>
+            4. The userSubject which was emitted before in auth.service.ts, we are subscribing to that subject in header.component.ts and performing authentication in ngOnInit().
+                this.userSub = this.authService.userSubject.subscribe(user => {
+                    // this.isAuthenticated = !user ? false : true;
+                    // The above statement can also be witten as
+                    this.isAuthenticated = !!user;
+                    console.log('!user: ', !user); // false
+                    console.log('!!user: ', !!user); // true
+                });
+    11. (20.16) Adding token to outgoing requests: (In this approach of adding token to the request, we are adding token to the get request to fetch the recipes.)
+        1. Replaced the Subject with BehaviorSubject
+            userSubject = new Subject<User>();
+            userSubject = new BehaviorSubject<User | null>(null);
+        2. 
+        3. Now because of the subject you are able to emit the user like this ( You have seen the following code already in point 9.)
+            private handleAuthentication(email: string, userId: string, token: string, expiresIn: number) {
+                const expirationDate = new Date(new Date().getTime() + expiresIn * 1000);
+                const user = new User(email, userId, token, expirationDate);
+                this.userSubject.next(user);
+            }
+        4. We are subscribing to the userSubject in data-storage.service.ts like this
+        Here, although you dont see subscribe() in the following code, it does subscribe because of take() and exhaustMap() method in pipe()
+            return this.authService.userSubject.pipe(take(1), exhaustMap(user => {
+                if(user !== null && user.token !== null) {
+                    return this.http.get<Recipe[]>('https://recipe-place-default-rtdb.firebaseio.com/recipes.json', {  
+                    params: new HttpParams().set('auth', user.token)
+                });
+                } else {
+                    return this.http.get<Recipe[]>('https://recipe-place-default-rtdb.firebaseio.com/recipes.json', {  
+                    params: new HttpParams()
+                })
+                } 
+            })
+            Note: In the course, there were no if and else statements. Because of strict mode I had to add if and else statements otherwise it was throwing an error at "user.token" in 
+            params: new HttpParams().set('auth', user.token).
+    12. (20.17) Attaching the token with an interceptor:
+        1. Created a new interceptor auth-interceptor.service.ts
+        2. Take a look at intercept() method to a get a better understanding
+        3. For interceptors we have to add this in app.module.ts
+            providers: [ShoppingListService,
+                {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptorService, multi: true}
+    
+            ],
+    13. Adding Logout functionality: (in auth.service.ts)
+        logout() {
+            this.userSubject.next(null);
+            this.router.navigate(['/auth']);
+        }
+    14. Now, After successful login when we reload the page when we are on "localhost:4200/recipes"
+        the get request to "/recipes" gives 401: UnAuthorized because the token is not getting retained.
+        To retain the token even if we reload the page:
+        1. Created autoLogin() in auth.service.ts. 
+        2. Storing the user information in localStorage while the user logs in or during Authentication.
+        3. Retrieving the user information from localStorage when performing autoLogin
+            Take a look at autoLogin() in auth.service.ts
+    15. To logout automatically after token expires, created autoLogout() in auth.service.ts.
+        1. When a user logs in or when handling authentication we are calling autoLogout() method and passing the expiration date in milliseconds.
+        2. In autoLogout() we are using setTimeout() to call the logout() function when the expiration date reaches its expiration.
+    16. Adding an AuthGuard to protect route '/recipes' if user is not logged in. Take a look at auth.guard.ts
+21. Dynamic Components:
+    First way: with *ngIf
+    1. Created a component with ng g c alert
+    2. Placed the component in shared folder.
+    3. Placed the alert selector in auth.component.html
+    4. We are able to see alert when we enter wrong password. The alert has a warning text and close button.
+    5. Emitting an event when we click on close or click around the alert.
+    6. Emitting the event in alert.component.ts
+    7. When this alert is emitted it is changing a value (changing error to null) in auth.component.ts so that the error disappears.
+
+    Second way: If you want to do programatically 
+    1. Didnot implement it
+22. Angular Modules & Optimizing Angular Apps
