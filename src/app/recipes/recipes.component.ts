@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Recipe } from './recipe-list/recipe.model';
 import { RecipeService } from './services/recipe.service';
+import { DataStorageService } from '../shared/data-storage.service';
 
 @Component({
   selector: 'app-recipes',
@@ -11,7 +12,8 @@ import { RecipeService } from './services/recipe.service';
 export class RecipesComponent implements OnInit {
   selectedRecipe !: Recipe;
   
-  constructor(private recipeService: RecipeService) { }
+  constructor(private recipeService: RecipeService,
+              private dataService: DataStorageService) { }
 
   ngOnInit() {
     // Do not need this as we are using Routes
@@ -20,6 +22,8 @@ export class RecipesComponent implements OnInit {
         this.selectedRecipe = recipe;
       }
     ); */
+    this.dataService.fetchRecipes().subscribe();
+
   }
 
 }
