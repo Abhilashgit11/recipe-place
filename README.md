@@ -349,3 +349,50 @@ By using *ngIf, navigating between "Recipes" and "shopping-list" if the value of
     Second way: If you want to do programatically 
     1. Didnot implement it
 22. Angular Modules & Optimizing Angular Apps
+    ### Creating Recipe Module
+    1. Created a module called recipes.module.ts inside recipes component.
+    2. Moved all the declarations related to recipes from app.module.ts into recipes.module.ts and placed in declaration array: declarations: [].
+    3. All these declarations can be exported as well in the export array: export: []
+    Note: These declarations need to be exported only if they are being used by other modules. In our project we are not using any of the recipes components in other modules. So if we comment these out the app would still work.
+    4. We need to import all the angular modules we are using in Recipes components such as   
+        RouterModule, 
+        CommonModule, 
+        ReactiveFormsModule
+        However there are exceptions: BrowserModule, HttpClientModule. These are available globally.
+    5. Created a recipes-routing.module.ts and moved all the recipes routes from app-routing.module.ts to recipes-routing.module.ts.
+    ### Creating Shopping List Module
+    6. Moved all the declarations related to shopping list component from app.module.ts to 
+        shopping-list-module.ts
+    7. Created shopping-list-routing.module.ts and moved all the routes related to shopping list to shopping-list-routing.module.ts
+    8. Imported all the required angular modules.
+    ### Shared Modules.
+    9. Created shared module and moved its related declarations from app.module.ts to shared.module.ts
+    10. Since all the shared components are shared between recipes and shopping list conponents we need to export them in shared module
+    11.  Created a core.module.ts and moved all the providers from app.module.ts to core.module.ts
+    Note: You must use core module if you have provided your services in providers array.
+        But if you have provided @Injectable({providedIn: 'root'}) on top your service, 
+        creating a core module is not recommended.
+    12. Created auth.module.ts and moved all auth declarations from app.module.ts to auth.module.ts.
+    13. Created auth-routing.module.ts and moved all the paths related to auth component from app-routing.module.ts to auth-routing.module.ts
+    ### Lazy Loading
+    14. (22.14) While implementing Lazy loading it is important to remember that we remove any unused imports in app.module.ts and app-routing.module.ts, or else it will load it eagerly and lazily
+    15. For whichever component you want to Lazy load, place that path in app-routing.module.ts and add loadChildren property to the route like this
+    {path: 'recipes', loadChildren: () => import('./recipes/recipes.module').then(m => m.RecipesModule)}
+    16. Since we are loading Recipes Component Lazily we should remove RecipesComponent from the imports array in app.module.ts.
+    17. (22.15) Repeating same procedure for Auth and ShoppingList components as well.
+    ### Optimizing Lazy loading: pre-load Lazy loaded module
+    18. We can pre load the lazy modules by placing this in app-routing.module.ts
+    imports: [RouterModule.forRoot(appRoutes, {preloadingStrategy: PreloadAllModules})],
+    19. (22.18) Always use @Injectable({providedIn: 'root'}) or provide in app.module.ts like 
+        Providers: [SomeService]
+    when creating services. This way the app uses the same instance of the service.
+
+    20. Providing services in Lazily loaded modules will create a new instance of the service.
+    If this is the behavior you need then you can use it.
+    21. (22.19) Ahead of Time vs Just in time compilation
+23. Deployment:
+    1. Installed firebase CLI: npm install -g firebase-tools
+    2. Deployed with firebase deploy
+    3. App was running at this URL
+    4. Un-deploy: Delete the project mnaually on the firebase console.
+
